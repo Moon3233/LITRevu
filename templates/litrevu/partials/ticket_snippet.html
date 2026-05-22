@@ -1,0 +1,24 @@
+<article class="card" aria-labelledby="ticket-{{ post.pk }}-title">
+  <p class="card__meta">
+    <span class="badge">Billet</span> —
+    {{ post.time_created|date:"d/m/Y H:i" }} —
+    <strong>{{ post.user.username }}</strong>
+  </p>
+  <h2 class="card__title" id="ticket-{{ post.pk }}-title">{{ post.title }}</h2>
+  {% if post.image %}
+  <img class="card__image" src="{{ post.image.url }}" alt="Couverture : {{ post.title }}">
+  {% endif %}
+  {% if post.description %}
+  <p class="card__body">{{ post.description|linebreaksbr }}</p>
+  {% endif %}
+  {% if show_actions and post.user == request.user %}
+  <div class="actions">
+    <a class="btn btn--secondary" href="{% url 'ticket_edit' post.pk %}">Modifier</a>
+    {% include "litrevu/partials/delete_dialog.html" with object_label="ce billet" delete_url_name="ticket_delete" object_pk=post.pk %}
+  </div>
+  {% elif show_review_action and post.pk not in reviewed_ticket_ids %}
+  <div class="actions">
+    <a class="btn btn--primary" href="{% url 'review_create' post.pk %}">Publier une critique</a>
+  </div>
+  {% endif %}
+</article>

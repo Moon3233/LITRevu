@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Vos posts — LITRevu{% endblock %}
+{% block main_class %}page page--wide{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Vos posts</h1>
+
+{% if posts %}
+  {% for post in posts %}
+    {% if post.content_type == 'TICKET' %}
+      {% include "litrevu/partials/ticket_snippet.html" with post=post show_actions=True %}
+    {% elif post.content_type == 'REVIEW' %}
+      {% include "litrevu/partials/review_snippet.html" with post=post show_actions=True %}
+    {% endif %}
+  {% endfor %}
+{% else %}
+<p class="empty-state">Vous n'avez pas encore publié de billet ni de critique.</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/dialog.js' %}"></script>
+{% endblock %}

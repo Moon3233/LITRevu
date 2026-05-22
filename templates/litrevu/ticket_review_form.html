@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Publier une critique — LITRevu{% endblock %}
+{% block main_class %}page page--wide{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Créer un billet et une critique</h1>
+<p class="card__meta">Publiez une critique « à partir de zéro » en une seule étape.</p>
+<div class="card">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <fieldset class="form-group">
+      <legend style="font-weight: 700; margin-bottom: 1rem;">Billet</legend>
+      <div class="form-group">
+        <label for="id_title">{{ form.title.label }}</label>
+        {{ form.title }}
+        {% if form.title.errors %}<ul class="form-errors">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div class="form-group">
+        <label for="id_description">{{ form.description.label }}</label>
+        {{ form.description }}
+      </div>
+      <div class="form-group">
+        <label for="id_image">{{ form.image.label }}</label>
+        {{ form.image }}
+      </div>
+    </fieldset>
+    <fieldset class="form-group">
+      <legend style="font-weight: 700; margin-bottom: 1rem;">Critique</legend>
+      <div class="form-group">
+        {% include "litrevu/partials/rating_input.html" with label=form.rating.label value=form.rating.value errors=form.rating.errors field_id="id_rating" %}
+      </div>
+      <div class="form-group">
+        <label for="id_headline">{{ form.headline.label }}</label>
+        {{ form.headline }}
+      </div>
+      <div class="form-group">
+        <label for="id_body">{{ form.body.label }}</label>
+        {{ form.body }}
+      </div>
+    </fieldset>
+    <div class="actions">
+      <button type="submit" class="btn btn--primary">Publier</button>
+      <a class="btn btn--secondary" href="{% url 'feed' %}">Annuler</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/rating-input.js' %}"></script>
+{% endblock %}

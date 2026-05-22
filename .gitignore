@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.py[cod]
+*.sqlite3-journal
+.env
+media/*
+!media/tickets/
+!media/tickets/**
+*.log
+.DS_Store

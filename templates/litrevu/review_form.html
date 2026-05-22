@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{% if action == 'edit' %}Modifier la critique{% else %}Nouvelle critique{% endif %} — LITRevu{% endblock %}
+
+{% block content %}
+<h1 class="page-title">
+  {% if action == 'edit' %}Modifier votre critique{% else %}Créer une critique{% endif %}
+</h1>
+{% if ticket %}
+<p class="card__meta">En réponse au billet : <strong>{{ ticket.title }}</strong> ({{ ticket.user.username }})</p>
+{% endif %}
+<div class="card">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+      {% if field.name == 'rating' %}
+      <div class="form-group">
+        {% include "litrevu/partials/rating_input.html" with label=field.label value=field.value errors=field.errors field_id=field.id_for_label %}
+      </div>
+      {% else %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <ul class="form-errors">
+          {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      {% endif %}
+    {% endfor %}
+    <div class="actions">
+      <button type="submit" class="btn btn--primary">Enregistrer</button>
+      <a class="btn btn--secondary" href="{% if action == 'edit' %}{% url 'posts' %}{% else %}{% url 'feed' %}{% endif %}">Annuler</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/rating-input.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,21 @@
+<article class="card" aria-labelledby="review-{{ post.pk }}-title">
+  <p class="card__meta">
+    <span class="badge">Critique</span> —
+    {{ post.time_created|date:"d/m/Y H:i" }} —
+    <strong>{{ post.user.username }}</strong>
+    {% if post.ticket %}
+    — billet : <em>{{ post.ticket.title }}</em>
+    {% endif %}
+  </p>
+  <h2 class="card__title" id="review-{{ post.pk }}-title">{{ post.headline }}</h2>
+  <p>{% include "litrevu/partials/stars.html" with rating=post.rating %}</p>
+  {% if post.body %}
+  <p class="card__body">{{ post.body|linebreaksbr }}</p>
+  {% endif %}
+  {% if show_actions and post.user == request.user %}
+  <div class="actions">
+    <a class="btn btn--secondary" href="{% url 'review_edit' post.pk %}">Modifier</a>
+    {% include "litrevu/partials/delete_dialog.html" with object_label="cette critique" delete_url_name="review_delete" object_pk=post.pk %}
+  </div>
+  {% endif %}
+</article>

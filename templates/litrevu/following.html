@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Abonnements — LITRevu{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Abonnements</h1>
+
+<section class="card" aria-labelledby="follow-heading">
+  <h2 id="follow-heading">Suivre un utilisateur</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="{{ follow_form.username.id_for_label }}">{{ follow_form.username.label }}</label>
+      {{ follow_form.username }}
+      {% if follow_form.username.errors %}
+      <ul class="form-errors">
+        {% for error in follow_form.username.errors %}<li>{{ error }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    <button type="submit" class="btn btn--primary">Suivre</button>
+  </form>
+</section>
+
+<section class="card" aria-labelledby="list-heading">
+  <h2 id="list-heading">Utilisateurs suivis</h2>
+  {% if followed %}
+  <ul class="follow-list">
+    {% for link in followed %}
+    <li class="follow-list__item">
+      <span>{{ link.followed_user.username }}</span>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="unfollow_id" value="{{ link.followed_user.pk }}">
+        <button type="submit" class="btn btn--secondary">Ne plus suivre</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty-state">Vous ne suivez personne pour le moment.</p>
+  {% endif %}
+</section>
+{% endblock %}

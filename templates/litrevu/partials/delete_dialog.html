@@ -1,0 +1,16 @@
+<button type="button" class="btn btn--danger" data-open-dialog="dialog-delete-{{ object_pk }}">
+  Supprimer
+</button>
+<dialog class="dialog" id="dialog-delete-{{ object_pk }}" aria-labelledby="dialog-title-{{ object_pk }}">
+  <div class="dialog__inner">
+    <h3 id="dialog-title-{{ object_pk }}">Confirmer la suppression</h3>
+    <p>Supprimer définitivement {{ object_label }} ?</p>
+    <div class="dialog__actions">
+      <form method="post" action="{% url delete_url_name object_pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--danger">Confirmer</button>
+      </form>
+      <button type="button" class="btn btn--secondary" data-close-dialog="dialog-delete-{{ object_pk }}">Annuler</button>
+    </div>
+  </div>
+</dialog>

@@ -1,0 +1,38 @@
+{# Sélecteur de note par étoiles (0–5). Radios en ordre inverse pour l’effet de survol CSS. #}
+<div class="rating-input">
+  <fieldset class="rating-input__fieldset">
+    <legend class="rating-input__legend">{{ label|default:"Note" }}</legend>
+    <div class="rating-input__stars" role="presentation">
+      {% for star in "54321" %}
+      <input
+        type="radio"
+        class="rating-input__radio"
+        name="{{ field_name|default:'rating' }}"
+        id="{{ field_id|default:'id_rating' }}_{{ star }}"
+        value="{{ star }}"
+        {% if value|stringformat:"s" == star %}checked{% endif %}
+      >
+      <label
+        class="rating-input__star"
+        for="{{ field_id|default:'id_rating' }}_{{ star }}"
+        title="{{ star }} sur 5"
+      >
+        <span class="rating-input__icon" aria-hidden="true">★</span>
+        <span class="visually-hidden">{{ star }} sur 5</span>
+      </label>
+      {% endfor %}
+    </div>
+    <p class="rating-input__value" id="{{ field_id|default:'id_rating' }}_hint" aria-live="polite">
+      {% if value %}
+        Note sélectionnée : {{ value }} sur 5
+      {% else %}
+        Cliquez sur une étoile pour noter (1 à 5)
+      {% endif %}
+    </p>
+  </fieldset>
+  {% if errors %}
+  <ul class="form-errors">
+    {% for error in errors %}<li>{{ error }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+</div>

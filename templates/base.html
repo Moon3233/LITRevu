@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}LITRevu{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <a class="skip-link" href="#main">Aller au contenu principal</a>
+
+  {% if user.is_authenticated %}
+  <header class="site-header" role="banner">
+    <a class="logo" href="{% url 'feed' %}">LITRevu</a>
+    <nav aria-label="Navigation principale">
+      <ul class="main-nav">
+        <li><a href="{% url 'feed' %}" {% if request.resolver_match.url_name == 'feed' %}aria-current="page"{% endif %}>Flux</a></li>
+        <li><a href="{% url 'posts' %}" {% if request.resolver_match.url_name == 'posts' %}aria-current="page"{% endif %}>Posts</a></li>
+        <li><a href="{% url 'following' %}" {% if request.resolver_match.url_name == 'following' %}aria-current="page"{% endif %}>Abonnements</a></li>
+        <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+      </ul>
+    </nav>
+  </header>
+  {% endif %}
+
+  <main id="main" class="{% block main_class %}page{% endblock %}" role="main">
+    {% if messages %}
+    <ul class="messages" role="status" aria-live="polite">
+      {% for message in messages %}
+      <li class="message{% if message.tags %} message--{{ message.tags }}{% endif %}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

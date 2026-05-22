@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Flux — LITRevu{% endblock %}
+{% block main_class %}page page--wide{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Flux</h1>
+<div class="feed-actions">
+  <a class="btn btn--primary" href="{% url 'ticket_create' %}">Demander une critique</a>
+  <a class="btn btn--secondary" href="{% url 'ticket_review_create' %}">Publier une critique</a>
+</div>
+
+{% if posts %}
+  {% for post in posts %}
+    {% if post.content_type == 'TICKET' %}
+      {% include "litrevu/partials/ticket_snippet.html" with post=post show_review_action=True %}
+    {% elif post.content_type == 'REVIEW' %}
+      {% include "litrevu/partials/review_snippet.html" with post=post %}
+    {% endif %}
+  {% endfor %}
+{% else %}
+<p class="empty-state">Votre flux est vide. Suivez des utilisateurs ou publiez un billet.</p>
+{% endif %}
+{% endblock %}
