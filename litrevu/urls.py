@@ -17,19 +17,12 @@ urlpatterns = [
     path('ticket/nouveau/', views.ticket_create, name='ticket_create'),
     path('ticket/<int:pk>/modifier/', views.ticket_edit, name='ticket_edit'),
     path('ticket/<int:pk>/supprimer/', views.ticket_delete, name='ticket_delete'),
-    path(
-        'ticket/<int:ticket_pk>/critique/nouvelle/',
-        views.review_create,
-        name='review_create',
-    ),
-    path(
-        'ticket-critique/nouveau/',
-        views.ticket_review_create,
-        name='ticket_review_create',
-    ),
+    path('ticket/<int:ticket_pk>/critique/nouvelle/', views.review_create, name='review_create'),
+    path('ticket-critique/nouveau/', views.ticket_review_create, name='ticket_review_create'),
     path('critique/<int:pk>/modifier/', views.review_edit, name='review_edit'),
     path('critique/<int:pk>/supprimer/', views.review_delete, name='review_delete'),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

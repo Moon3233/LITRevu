@@ -22,7 +22,7 @@
 </section>
 
 <section class="card" aria-labelledby="list-heading">
-  <h2 id="list-heading">Utilisateurs suivis</h2>
+  <h2 id="list-heading">Abonnements</h2>
   {% if followed %}
   <ul class="follow-list">
     {% for link in followed %}
@@ -38,6 +38,21 @@
   </ul>
   {% else %}
   <p class="empty-state">Vous ne suivez personne pour le moment.</p>
+  {% endif %}
+</section>
+
+<section class="card" aria-labelledby="followers-heading">
+  <h2 id="followers-heading">Abonnés</h2>
+  {% if followers %}
+  <ul class="follow-list">
+    {% for link in followers %}
+    <li class="follow-list__item">
+      <span>{{ link.user.username }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty-state">Personne ne vous suit pour le moment.</p>
   {% endif %}
 </section>
 {% endblock %}

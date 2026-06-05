@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.shortcuts import redirect
-from django.urls import resolve, reverse
+from django.urls import reverse
 
 
 class LoginRequiredMiddleware:

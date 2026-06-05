@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Review, Ticket, UserFollows
+from .models import Review, Ticket
 
 User = get_user_model()
 
@@ -38,8 +38,13 @@ class TicketForm(forms.ModelForm):
         model = Ticket
         fields = ('title', 'description', 'image')
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'Titre du livre ou article'}),
-            'description': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Description'}),
+            'title': forms.TextInput(
+                attrs={
+                    'placeholder': 'Titre du livre ou article'}),
+            'description': forms.Textarea(
+                attrs={
+                    'rows': 4,
+                    'placeholder': 'Description'}),
         }
 
 
@@ -49,8 +54,13 @@ class ReviewForm(forms.ModelForm):
         fields = ('rating', 'headline', 'body')
         widgets = {
             'rating': forms.HiddenInput(),
-            'headline': forms.TextInput(attrs={'placeholder': "Titre de la critique"}),
-            'body': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Commentaire'}),
+            'headline': forms.TextInput(
+                attrs={
+                    'placeholder': "Titre de la critique"}),
+            'body': forms.Textarea(
+                attrs={
+                    'rows': 5,
+                    'placeholder': 'Commentaire'}),
         }
 
 
@@ -84,7 +94,9 @@ class FollowForm(forms.Form):
     username = forms.CharField(
         max_length=150,
         label="Nom d'utilisateur",
-        widget=forms.TextInput(attrs={'placeholder': "Entrez un nom d'utilisateur"}),
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': "Entrez un nom d'utilisateur"}),
     )
 
     def clean_username(self):

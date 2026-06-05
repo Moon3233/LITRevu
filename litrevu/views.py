@@ -6,8 +6,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .feed import build_feed, build_own_posts
-from .forms import FollowForm, ReviewForm, SignUpForm, TicketForm, TicketReviewForm
+from .forms import (
+    FollowForm,
+    ReviewForm,
+    SignUpForm,
+    TicketForm,
+    TicketReviewForm,
+)
 from .models import Review, Ticket, UserFollows
+from .permissions import can_review_ticket
 
 
 def landing(request):
@@ -44,8 +51,10 @@ def signup(request):
 def feed(request):
     posts = build_feed(request.user)
     reviewed_ticket_ids = set(
-        Review.objects.filter(user=request.user).values_list('ticket_id', flat=True)
-    )
+        Review.objects.filter(
+            user=request.user).values_list(
+            'ticket_id',
+            flat=True))
     return render(
         request,
         'litrevu/feed.html',
@@ -71,7 +80,8 @@ def following(request):
             if follow_form.is_valid():
                 followed = follow_form.followed_user
                 if followed == request.user:
-                    messages.error(request, 'Vous ne pouvez pas vous suivre vous-même.')
+                    messages.error(
+                        request, 'Vous ne pouvez pas vous suivre vous-même.')
                 else:
                     UserFollows.objects.get_or_create(
                         user=request.user,
@@ -83,20 +93,32 @@ def following(request):
                     )
                 return redirect('following')
         elif 'unfollow_id' in request.POST:
-            UserFollows.objects.filter(
+            try:
+                unfollow_id = int(request.POST['unfollow_id'])
+            except (TypeError, ValueError):
+                messages.error(request, 'Demande invalide.')
+                return redirect('following')
+            deleted, _ = UserFollows.objects.filter(
                 user=request.user,
-                followed_user_id=request.POST['unfollow_id'],
+                followed_user_id=unfollow_id,
             ).delete()
-            messages.info(request, 'Abonnement supprimé.')
+            if deleted:
+                messages.info(request, 'Abonnement supprimé.')
             return redirect('following')
 
     followed = UserFollows.objects.filter(user=request.user).select_related(
         'followed_user'
     )
+    followers = UserFollows.objects.filter(
+        followed_user=request.user).select_related('user')
     return render(
         request,
         'litrevu/following.html',
-        {'follow_form': follow_form, 'followed': followed},
+        {
+            'follow_form': follow_form,
+            'followed': followed,
+            'followers': followers,
+        },
     )
 
 
@@ -109,7 +131,8 @@ def ticket_create(request):
         ticket.save()
         messages.success(request, 'Billet publié.')
         return redirect('feed')
-    return render(request, 'litrevu/ticket_form.html', {'form': form, 'action': 'create'})
+    return render(request, 'litrevu/ticket_form.html',
+                  {'form': form, 'action': 'create'})
 
 
 @login_required
@@ -143,8 +166,9 @@ def ticket_delete(request, pk):
 @login_required
 def review_create(request, ticket_pk):
     ticket = get_object_or_404(Ticket, pk=ticket_pk)
-    if Review.objects.filter(ticket=ticket, user=request.user).exists():
-        messages.warning(request, 'Vous avez déjà critiqué ce billet.')
+    allowed, error_message = can_review_ticket(request.user, ticket)
+    if not allowed:
+        messages.warning(request, error_message)
         return redirect('feed')
     form = ReviewForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -152,7 +176,7 @@ def review_create(request, ticket_pk):
         review.ticket = ticket
         review.user = request.user
         review.save()
-        messages.success(request, 'Critique publiée.')
+        messages.success(request, 'Critique publiée avec succès.')
         return redirect('feed')
     return render(
         request,
